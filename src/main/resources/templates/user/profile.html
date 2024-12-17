@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en." data-th-replace="~{base :: parent(~{::#content},~{::title},~{::script})}">
+  <head>
+    <title data-th-text="${loggedInUser.name} + ' | SCM'">Profile Page</title>
+  </head>
+
+  <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+    <div id="content">
+    	
+      <!-- Sidebar (User is logged in: Sidebar) -->
+      <div data-th-if="${loggedInUser}">
+        <div data-th-replace="~{user/sidebar :: sidebar}"></div>
+      </div>
+
+      <!-- Profile Main Content -->
+      <div class="sm:pl-64 pt-20 pb-12 flex justify-center">
+        <div class="flex flex-col items-center w-full max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+          <!-- Profile Picture -->
+          <div class="relative mb-6">
+            <img data-th-src="@{${loggedInUser.profilePic}}" src="/images/profile.png" alt="Profile Photo"
+              class="w-32 h-32 rounded-full shadow-xl border-4 border-gray-200 dark:border-gray-600 object-cover">
+          </div>
+
+          <!-- User Info -->
+          <div class="w-full">
+            <div class="mb-6">
+              <!-- Editable Name -->
+              <div class="w-full flex items-center mb-4">
+                <label for="name-input" class="text-lg font-semibold text-gray-800 dark:text-gray-200 mr-4 w-32">Name</label>
+                <!-- Display Name (read-only) -->
+                <h2 id="name-display" class="text-2xl font-semibold text-gray-800 dark:text-gray-200" data-th-text="${loggedInUser.name}">
+                  <!-- Thymeleaf will replace this with actual data -->
+                  ${loggedInUser.name}
+                </h2>
+                <!-- Editable Name -->
+                <input id="name-input" class="hidden w-full p-3 mt-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none"
+                  type="text" data-th-value="${loggedInUser.name}">
+              </div>
+
+              <!-- Email (Non-editable) -->
+              <div class="w-full flex items-center mb-4">
+                <label for="email" class="text-lg font-semibold text-gray-800 dark:text-gray-200 mr-4 w-32">Email</label>
+                <p id="email-display" class="text-gray-600 dark:text-gray-400" data-th-text="${loggedInUser.email}">
+                  ${loggedInUser.email}
+                </p>
+              </div>
+
+              <!-- Phone Number (Non-editable) -->
+              <div class="w-full flex items-center mb-4">
+                <label for="phone" class="text-lg font-semibold text-gray-800 dark:text-gray-200 mr-4 w-32">Phone</label>
+                <p id="phone-display" class="text-gray-600 dark:text-gray-400" data-th-text="${loggedInUser.phoneNumber}">
+                  ${loggedInUser.phoneNumber}
+                </p>
+              </div>
+
+               <!-- About -->
+             <div class="w-full flex items-center mb-6">
+              <label for="about-input" class="text-lg font-semibold text-gray-800 dark:text-gray-200 mr-4 w-32">About</label>
+              <!-- Display About (read-only) -->
+              <p id="about-display" class="text-gray-600 dark:text-gray-400 text-center" data-th-text="${loggedInUser.about}">
+                <!-- Thymeleaf will replace this with actual data -->
+              </p>
+              <!-- Editable About -->
+              <textarea id="about-input" class="hidden w-full p-3 mt-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none"
+                rows="4" data-th-text="${loggedInUser.about}"></textarea>
+            </div>
+          </div>
+
+            <!-- Verification Info -->
+            <div class="w-full flex justify-between mb-6">
+              <p class="text-sm text-gray-500 dark:text-gray-400">Email Verified: 
+                <span class="font-semibold text-gray-700 dark:text-gray-300" id="email-verified"
+                  data-th-text="${loggedInUser.emailVerified ? 'YES' : 'NO'}">No</span>
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Phone Verified: 
+                <span class="font-semibold text-gray-700 dark:text-gray-300" id="phone-verified"
+                  data-th-text="${loggedInUser.phoneVerified ? 'YES' : 'NO'}">No</span>
+              </p>
+            </div>
+
+            <!-- Buttons -->
+            <div id="edit-save-buttons" class="flex space-x-4 justify-center">
+              <button id="edit-btn" onclick="toggleEditMode()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none transition-all duration-300">
+                Edit Profile
+              </button>
+              <button id="save-btn" onclick="saveChanges()" class="hidden px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 focus:outline-none transition-all duration-300">
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Function to toggle between edit and save modes
+      function toggleEditMode() {
+        // Toggle visibility between display and input fields for editable fields (name and about)
+        document.getElementById("name-display").classList.toggle("hidden");
+        document.getElementById("name-input").classList.toggle("hidden");
+        document.querySelector('label[for="name-input"]').classList.toggle("hidden");
+
+        document.getElementById("about-display").classList.toggle("hidden");
+        document.getElementById("about-input").classList.toggle("hidden");
+        document.querySelector('label[for="about-input"]').classList.toggle("hidden");
+
+        // Toggle button visibility
+        document.getElementById("edit-btn").classList.toggle("hidden");
+        document.getElementById("save-btn").classList.toggle("hidden");
+      }
+
+      // Function to save the changes (this can be connected to a backend API)
+      function saveChanges() {
+        const name = document.getElementById("name-input").value;
+        const about = document.getElementById("about-input").value;
+
+        // Example of how you could collect and send this data to the backend:
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("about", about);
+
+        // Simulating an AJAX request (you can replace this with actual backend logic)
+        fetch('/user/update-profile', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update the profile page with the new values and exit edit mode
+            document.getElementById("name-display").innerText = name;
+            document.getElementById("about-display").innerText = about;
+
+            // Switch back to read-only mode
+            toggleEditMode();
+          } else {
+            alert("Failed to save changes. Please try again.");
+          }
+        });
+      }
+    </script>
+
+  </body>
+</html>

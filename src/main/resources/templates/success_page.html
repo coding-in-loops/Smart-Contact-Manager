@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  data-th-replace="~{base :: parent(~{::#content},~{::title},~{::script})}"
+>
+  <head>
+    <title>Success Page</title>
+  </head>
+  <body>
+    <div id="content" class="text-center mt-5 md:w-1/2 mx-auto">
+          <div data-th-replace="~{message::messagebox}"></div>
+    </div>
+    <script>
+      console.log("Success page");
+    </script>
+  </body>
+</html>
